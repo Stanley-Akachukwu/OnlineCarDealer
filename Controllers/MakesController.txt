@@ -1,0 +1,25 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using MyVegaApp.Controllers.Resources;
+using MyVegaApp.Core;
+using MyVegaApp.Core.Models;
+
+namespace MyVegaApp.Controllers {
+    public class MakesController : Controller {
+        private DbMock dbMock = new DbMock ();
+        private IMapper _mapper;
+        public MakesController (IMapper mapper) {
+            this._mapper = mapper;
+        }
+
+        [HttpGet ("/api/makes")]
+        public IEnumerable<MakeResource> GetMakes () {
+            //return await context.Makes.Include (m => m.Models).ToListAsync ();
+            var makes = dbMock.GetMakes ();
+            return _mapper.Map<List<Make>, List<MakeResource>> (makes.ToList ());
+        }
+
+    }
+}

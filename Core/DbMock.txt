@@ -1,0 +1,58 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using MyVegaApp.Core.Models;
+
+namespace MyVegaApp.Core {
+    public class DbMock {
+
+        public IEnumerable<Vehicle> GetVehicles () {
+
+            return new List<Vehicle> {
+                new Vehicle {
+                    Id = 1, ModelId = 1, IsRegistered = true, ContactEmail = "obi.saka@phone.com", ContactName = "Obi Saka", ContactPhone = "0906282882828", LastUpdate = DateTime.Now, Features = new List<VehicleFeature> {
+                        new VehicleFeature { VehicleId = 1, FeatureId = 1 }
+                        }
+                        },
+                        new Vehicle {
+                        Id = 1, ModelId = 1, IsRegistered = true, ContactEmail = "Kole.kolba@phone.com", ContactName = "Kole Kolba", ContactPhone = "080628288828", LastUpdate = DateTime.Now, Features = new List<VehicleFeature> {
+                        new VehicleFeature { VehicleId = 2, FeatureId = 3 }
+                        }
+                        }
+
+            };
+        }
+        public IEnumerable<Make> GetMakes () {
+            return new List<Make> {
+                new Make { Id = 1, Name = "Make1", Models = GetModels ().Where (i => i.MakeId == 1).ToList () },
+                new Make { Id = 2, Name = "Make2", Models = GetModels ().Where (i => i.MakeId == 2).ToList () },
+                new Make { Id = 3, Name = "Make3", Models = GetModels ().Where (i => i.MakeId == 3).ToList () },
+            };
+        }
+        public IEnumerable<Model> GetModels () {
+            return new List<Model> {
+                new Model { Id = 1, Name = "Make1-ModelA", MakeId = 1 },
+                new Model { Id = 2, Name = "Make1-ModelB", MakeId = 1 },
+                new Model { Id = 3, Name = "Make1-ModelC", MakeId = 1 },
+
+                new Model { Id = 4, Name = "Make2-ModelA", MakeId = 2 },
+                new Model { Id = 5, Name = "Make2-ModelB", MakeId = 2 },
+                new Model { Id = 6, Name = "Make2-ModelC", MakeId = 2 },
+
+                new Model { Id = 7, Name = "Make3-ModelA", MakeId = 3 },
+                new Model { Id = 8, Name = "Make3-ModelB", MakeId = 3 },
+                new Model { Id = 9, Name = "Make3-ModelC", MakeId = 3 },
+            };
+        }
+        public IEnumerable<Feature> GetFeatures () {
+            return new List<Feature> {
+                new Feature { Id = 1, Name = "Feature1", VehicleId = 1, FeatureId = 1 },
+                new Feature { Id = 2, Name = "Feature2", VehicleId = 2, FeatureId = 2 },
+                new Feature { Id = 3, Name = "Feature3", VehicleId = 3, FeatureId = 3 }
+            };
+        }
+
+    }
+}

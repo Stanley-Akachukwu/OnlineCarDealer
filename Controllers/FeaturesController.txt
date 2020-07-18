@@ -1,0 +1,27 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using MyVegaApp.Controllers.Resources;
+using MyVegaApp.Core;
+using MyVegaApp.Core.Models;
+
+namespace MyVegaApp.Controllers {
+    public class FeaturesController : Controller {
+        private DbMock dbMock = new DbMock ();
+
+        private readonly IMapper _mapper;
+        public FeaturesController (IMapper mapper) {
+            this._mapper = mapper;
+        }
+
+        [HttpGet ("/api/features")]
+        public IEnumerable<FeatureResource> GetFeatures () {
+            //return await context.Makes.Include (m => m.Models).ToListAsync ();
+            var features = dbMock.GetFeatures ();
+            return _mapper.Map<List<Feature>, List<FeatureResource>> (features.ToList ());
+        }
+
+    }
+}

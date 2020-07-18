@@ -1,0 +1,82 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MyVegaApp.Controllers.Resources;
+using MyVegaApp.Core;
+using MyVegaApp.Core.Models;
+namespace MyVegaApp.Controllers {
+    [Route ("/api/vehicles")]
+    public class VehiclesController : Controller {
+        private DbMock dbMock = new DbMock ();
+
+        private readonly IMapper mapper;
+        /*  private readonly IVehicleRepository repository;
+         private readonly IUnitOfWork unitOfWork; */
+        public VehiclesController (IMapper mapper) {
+            this.mapper = mapper;
+        }
+
+        [HttpPost]
+        public IActionResult CreateVehicle ([FromBody] VehicleResource vehicleResource) {
+            if (!ModelState.IsValid)
+                return BadRequest (ModelState);
+
+            var vehicles = dbMock.GetVehicles ().ToList ();
+            var vehicle = mapper.Map<VehicleResource, Vehicle> (vehicleResource);
+            vehicles.Add (vehicle);
+            var vehicleResources = new List<VehicleResource> ();
+            foreach (var v in vehicles) {
+                var vr = mapper.Map<Vehicle, VehicleResource> (v);
+                vehicleResources.Add (vr);
+            }
+            return Ok (vehicleResources);
+        }
+
+        [HttpPut ("{id}")]
+        public IActionResult UpdateVehicle (int id, [FromBody] VehicleResource vehicleResource) {
+            if (!ModelState.IsValid)
+                return BadRequest (ModelState);
+
+            var vehicles = dbMock.GetVehicles ().ToList ();
+            var dbvehicle = vehicles.Where (v => v.Id == id).FirstOrDefault ();
+            if (dbvehicle != null) {
+                vehicles.Remove (dbvehicle);
+            }
+
+            var vehicle = mapper.Map<VehicleResource, Vehicle> (vehicleResource);
+            vehicles.Add (vehicle);
+
+            var vehicleResources = new List<VehicleResource> ();
+            foreach (var v in vehicles) {
+                var vr = mapper.Map<Vehicle, VehicleResource> (v);
+                vehicleResources.Add (vr);
+            }
+            return Ok (vehicleResources);
+        }
+
+        [HttpDelete ("{id}")]
+        public IActionResult DeleteVehicle (int id) {
+            var vehicles = dbMock.GetVehicles ().ToList ();
+            var dbvehicle = vehicles.Where (v => v.Id == id).FirstOrDefault ();
+            if (dbvehicle == null)
+                return NotFound ();
+            vehicles.Remove (dbvehicle);
+            return Ok (id);
+        }
+
+        [HttpGet ("{id}")]
+        public IActionResult GetVehicle (int id) {
+            var vehicles = dbMock.GetVehicles ().ToList ();
+            var dbvehicle = vehicles.Where (v => v.Id == id).FirstOrDefault ();
+            if (dbvehicle == null)
+                return NotFound ();
+            var vehicleResource = mapper.Map<Vehicle, VehicleResource> (dbvehicle);
+            return Ok (vehicleResource);
+        }
+
+    }
+}
